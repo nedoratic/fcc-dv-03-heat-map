@@ -1,0 +1,17 @@
+html,
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	min-height: 100%;
+}
+
+svg {
+	background-color: lightcyan;
+}
+
+#canvas {
+	min-height: 600px;
+	min-width: 1200px;
+}
