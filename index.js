@@ -7,6 +7,9 @@ let monthlyVarianceValues = [];
 let xScale;
 let yScale;
 
+let minYear;
+let maxYear;
+
 let padding = 60;
 let height = 600;
 let width = 1200;
@@ -17,15 +20,89 @@ canvas.attr('height', height);
 canvas.attr('width', width);
 
 let generateScales = () => {
-	xScale = d3.scaleLinear().range([padding, width - padding]);
-	yScale = d3.scaleTime().range([padding, height - padding]);
+	minYear = d3.min(monthlyVarianceValues, (item) => {
+		return item.year;
+	});
+	maxYear = d3.max(monthlyVarianceValues, (item) => {
+		return item.year;
+	});
+	xScale = d3
+		.scaleLinear()
+		.domain([minYear, maxYear + 1])
+		.range([padding, width - padding]);
+	yScale = d3
+		.scaleTime()
+		.domain([new Date(0, 0, 0, 0, 0, 0, 0), new Date(0, 12, 0, 0, 0, 0, 0)])
+		.range([padding, height - padding]);
 };
 
-let drawCells = () => {};
+let drawCells = () => {
+	canvas
+		.selectAll('rect')
+		.data(monthlyVarianceValues)
+		.enter()
+		.append('rect')
+		.attr('class', 'cell')
+		.attr('fill', (item) => {
+			variance = baseTemperature + item.variance;
+			if (variance >= 2.8 && variance < 3.9) {
+				return '#4475B4';
+			} else if (variance >= 3.9 && variance < 5.0) {
+				return '#75ACD0';
+			} else if (variance >= 5.0 && variance < 6.1) {
+				return '#AAD9E9';
+			} else if (variance >= 6.1 && variance < 7.2) {
+				return '#E0F2F8';
+			} else if (variance >= 7.2 && variance < 8.3) {
+				return '#FFFFBF';
+			} else if (variance >= 8.3 && variance < 9.5) {
+				return '#FEE08F';
+			} else if (variance >= 9.5 && variance < 10.6) {
+				return '#FCAD61';
+			} else if (variance >= 10.6 && variance < 11.7) {
+				return '#F36D43';
+			} else if (variance >= 11.7 && variance < 12.8) {
+				return '#D73026';
+			} else if (variance < 2.8) {
+				return '#313695';
+			} else {
+				return '#A50026';
+			}
+		})
+		.attr('data-year', (item) => {
+			return item.year;
+		})
+		.attr('data-month', (item) => {
+			return item.month - 1;
+		})
+		.attr('data-temp', (item) => {
+			return baseTemperature + item.variance;
+		})
+		.attr('height', (height - 2 * padding) / 12)
+		.attr('y', (item) => {
+			return yScale(new Date(0, item.month - 1, 0, 0, 0, 0, 0));
+		})
+		.attr('width', (item) => {
+			let numberOfYears = maxYear - minYear;
+			return (width - 2 * padding) / numberOfYears;
+		})
+		.attr('x', (item) => {
+			return xScale(item.year);
+		});
+};
 
 let drawAxes = () => {
-	let xAxis = d3.axisBottom(xScale);
-	let yAxis = d3.axisLeft(yScale);
+	// Determine the first and last years
+	let firstYear = Math.ceil(minYear / 10) * 10;
+	let lastYear = Math.floor(maxYear / 10) * 10;
+
+	// X Axis Label
+	let xAxis = d3
+		.axisBottom(xScale)
+		.tickFormat(d3.format('d'))
+		.tickValues(d3.range(Math.ceil(minYear / 10) * 10, maxYear + 1, 10)); // Adjust ticks to every ten years starting from 1760
+	// Y Axis Label
+	let yAxis = d3.axisLeft(yScale).tickFormat(d3.timeFormat('%B'));
 
 	// Draw X Axis
 	canvas
