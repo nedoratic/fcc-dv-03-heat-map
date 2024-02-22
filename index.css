@@ -5,10 +5,17 @@ body {
 	justify-content: center;
 	align-items: center;
 	min-height: 100%;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-svg {
-	background-color: #f1f1f1;
+h1,
+h2 {
+	margin: 0;
+	padding: 0;
+}
+
+h2 {
+	font-weight: 400;
 }
 
 #canvas {
