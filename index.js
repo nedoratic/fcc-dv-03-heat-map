@@ -19,6 +19,8 @@ let canvas = d3.select('#canvas');
 canvas.attr('height', height);
 canvas.attr('width', width);
 
+let tooltip = d3.select('#tooltip');
+
 let generateScales = () => {
 	minYear = d3.min(monthlyVarianceValues, (item) => {
 		return item.year;
@@ -88,6 +90,27 @@ let drawCells = () => {
 		})
 		.attr('x', (item) => {
 			return xScale(item.year);
+		})
+		.on('mouseover', function (event, item) {
+			let rectYear = item.year;
+			let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			let monthName = monthNames[item.month - 1];
+			tooltip.transition().style('visibility', 'visible');
+			tooltip
+				.html(`Month: ${monthName}<br>Year: ${item.year}<br>Temperature: ${baseTemperature + item.variance} °C`)
+				.style('left', `${event.pageX}px`)
+				.style('top', `${event.pageY - 28}px`)
+				.attr('data-year', rectYear);
+			// Add outline to the hovered rect
+			d3.select(this)
+				.attr('stroke', 'black') // Set stroke color to black
+				.attr('stroke-width', '1px') // Set stroke width to 1px
+				.attr('stroke-opacity', '1'); // Ensure stroke is visible
+		})
+		.on('mouseout', function () {
+			tooltip.transition().style('visibility', 'hidden');
+			// Remove outline when mouse moves away
+			d3.select(this).attr('stroke', 'none');
 		});
 };
 
