@@ -10,16 +10,18 @@ body {
 
 h1,
 h2 {
+	font-size: 1.6rem;
 	margin: 0;
 	padding: 0;
 }
 
 h2 {
+	font-size: 1rem;
 	font-weight: 400;
 }
 
 #tooltip {
-	margin-top: 4em;
+	margin-top: 3.8em;
 	font-size: 0.8rem;
 	visibility: hidden;
 	width: auto;
